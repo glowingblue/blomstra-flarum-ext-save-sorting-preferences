@@ -1,8 +1,9 @@
 import Dropdown from 'flarum/common/components/Dropdown';
 import app from 'flarum/forum/app';
 import IndexPage from 'flarum/forum/components/IndexPage';
-import { override } from 'flarum/common/extend';
-import ItemList from 'flarum/common/utils/ItemList';
+import { extend } from 'flarum/common/extend';
+import type ItemList from 'flarum/common/utils/ItemList';
+import type Mithril from 'mithril';
 import Button from 'flarum/common/components/Button';
 
 app.initializers.add('blomstra/save-sorting-preferences', () => {
@@ -12,8 +13,7 @@ app.initializers.add('blomstra/save-sorting-preferences', () => {
     return;
   }
 
-  override(IndexPage.prototype, 'viewItems', function (this, user) {
-    const items = new ItemList();
+  extend(IndexPage.prototype, 'viewItems', function (items: ItemList<Mithril.Children>) {
     const sortMap = app.discussions.sortMap();
 
     if (!sort) {
@@ -25,7 +25,7 @@ app.initializers.add('blomstra/save-sorting-preferences', () => {
       return acc;
     }, {});
 
-    items.add(
+    items.setContent(
       'sort',
       <Dropdown
         buttonClassName="Button"
@@ -50,7 +50,5 @@ app.initializers.add('blomstra/save-sorting-preferences', () => {
         })}
       </Dropdown>
     );
-
-    return items;
   });
 });
