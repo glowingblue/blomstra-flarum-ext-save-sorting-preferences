@@ -24,11 +24,17 @@ class ApplyUserSortingMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $sort = Arr::get($request->getQueryParams(), 'sort');
+        $params = $request->getQueryParams();
+
+        $sort = Arr::get($params, 'sort');
         $lastSelectedSort = $actor->getPreference('discussion_sort');
 
-        return $handler->handle($request->withQueryParams([
-            'sort' => $sort ?? $lastSelectedSort,
-        ]));
+        $request = $request->withQueryParams(
+            array_merge($params, [
+                "sort" => $sort ?? $lastSelectedSort,
+            ])
+        );
+
+        return $handler->handle($request);
     }
 }
